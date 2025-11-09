@@ -1,0 +1,87 @@
+from sqlalchemy import create_engine, String, ForeignKey, Date
+from sqlalchemy.orm import DeclarativeBase, Mapped, relationship, mapped_column, Session
+from datetime import date
+
+engine = create_engine("sqlite:///bookshelf.db", echo=True)
+
+
+class Base(DeclarativeBase):
+    pass
+
+
+class Student(Base):
+    __tablename__ = "students"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    first_name: Mapped[str] = mapped_column(String(20), nullable=False)
+    second_name: Mapped[str] = mapped_column(String(20), nullable=False)
+    group_id: Mapped[int] = mapped_column(ForeignKey("groups.id"))
+
+    group: Mapped["Group"] = relationship(back_populates="students")
+    grades: Mapped[list["Grade"]] = relationship(
+        back_populates="student", cascade="all, delete-orphan"
+    )
+
+    def __str__(self):
+        return f"Student({self.id}, {self.first_name}, {self.second_name})"
+
+
+class Group(Base):
+    __tablename__ = "groups"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    group_name: Mapped[str] = mapped_column(String(6), nullable=False)
+
+    students: Mapped[list["Student"]] = relationship(
+        back_populates="group", cascade="all, delete-orphan"
+    )
+
+    def __str__(self):
+        return f"Group({self.id}, {self.group_name})"
+
+
+class Teacher(Base):
+    __tablename__ = "teachers"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    first_name: Mapped[str] = mapped_column(String(20), nullable=False)
+    second_name: Mapped[str] = mapped_column(String(20), nullable=False)
+
+    disciplines: Mapped[list["Discipline"]] = relationship(
+        back_populates="teacher", cascade="all, delete-orphan"
+    )
+
+    def __str__(self):
+        return f"Teacher({self.id}, {self.first_name}, {self.second_name})"
+
+
+class Discipline(Base):
+    __tablename__ = "disciplines"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    discipline_name: Mapped[str] = mapped_column(String(20), nullable=False)
+    teacher_id: Mapped["Teacher"] = mapped_column(ForeignKey("teacgers.id"))
+
+    teacher: Mapped["Teacher"] = relationship(back_populates="disciplines")
+    grades: Mapped[list["Grade"]] = relationship(
+        back_populates="discipline", cascade="all, delete-orphan"
+    )
+
+    def __str__(self):
+        return f"Teacher({self.id}, {self.first_name}, {self.second_name})"
+
+
+class Grade(Base):
+    __tablename__ = "grades"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    grade: Mapped[int] = mapped_column(nullable=False)
+    date_received: Mapped[date] = mapped_column(Date, nullable=False)
+
+    student_id: Mapped[int] = mapped_column(ForeignKey("students.id"), nullable=False)
+    discipline_id: Mapped[int] = mapped_column(
+        ForeignKey("discipline.id"), nullable=False
+    )
+
+    student: Mapped["Student"] = relationship(back_populates="grades")
+    discipline: Mapped["Discipline"] = relationship(back_populates="grades")

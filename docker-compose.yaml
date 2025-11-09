@@ -1,0 +1,27 @@
+version: "3.8"
+
+services:
+  web:
+    build: .
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+    stdin_open: true
+    tty: true
+  
+  db:
+    image: postgres
+    shm_size: 700mb
+    environment:
+      POSTGRES_DB: university_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: homeworkpassword
+    ports:
+      -"5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql
+
+
+volumes:
+  postgres_data:
