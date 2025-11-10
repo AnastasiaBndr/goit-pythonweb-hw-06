@@ -4,8 +4,7 @@ add:
 	git add .
 
 commit:
-	@msg="$(filter-out $@,$(MAKECMDGOALS))"; \
-	git commit -m "$$msg"
+	git commit -m "${name}"
 push:
 	git push origin main
 
@@ -16,7 +15,7 @@ compose:
 	docker compose up -d
 
 autogenerate:
-	alembic revision --autogenerate -m "Generating tables"
+	alembic revision --autogenerate -m "${name}"
 
 head:
 	alembic upgrade head
