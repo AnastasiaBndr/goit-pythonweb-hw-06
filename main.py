@@ -1,11 +1,14 @@
 from src.seed import fillGroup, clearAllData, fillStudent, fillTeacher, fillDiscipline, fillGrades
-from src.my_select import task1, task2, task3
+from src.my_select import task1, task2, task3,task4,task5,task6
 
 
 def main():
     # task1()
     # task2(1)
-    task3(4)
+    # task3(4)
+    # task4()
+    # task5(3)
+    task6(2)
 
     # clearAllData()
     # fillGroup(3)
