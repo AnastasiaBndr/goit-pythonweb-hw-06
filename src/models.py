@@ -83,24 +83,17 @@ class Discipline(Base):
 
 # Many to many
 
-association_table=Table(
-    "grades_assotiation_table",
-    Base.metadata,
-    Column("student_id"),
-    Column(),
-)
 
 class Grade(Base):
     __tablename__ = "grades"
 
-    id: Mapped[int] = mapped_column(primary_key=True)
-    grade: Mapped[int] = mapped_column(nullable=False)
-    date_received: Mapped[date] = mapped_column(Date, nullable=False)
-
-    student_id: Mapped[int] = mapped_column(ForeignKey("students.id"), nullable=False)
+    student_id: Mapped[int] = mapped_column(ForeignKey("students.id"), primary_key=True)
     discipline_id: Mapped[int] = mapped_column(
-        ForeignKey("disciplines.id"), nullable=False
+        ForeignKey("disciplines.id"), primary_key=True
     )
+    date_received: Mapped[date] = mapped_column(Date, primary_key=True)
+    
+    grade: Mapped[int] = mapped_column(nullable=False)
 
     student: Mapped["Student"] = relationship(back_populates="grades")
     discipline: Mapped["Discipline"] = relationship(back_populates="grades")

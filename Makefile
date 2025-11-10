@@ -1,5 +1,14 @@
 ENTRYPOINT = main.py
 
+add:
+	git add .
+
+commit:
+	@msg="$(filter-out $@,$(MAKECMDGOALS))"; \
+	git commit -m "$$msg"
+push:
+	git push origin main
+
 run:
  	docker run --name goit-hw-python-web-DB -p 5432:5432 -e POSTGRES_PASSWORD=homeworkpassword -d postgres
 
