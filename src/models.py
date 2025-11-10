@@ -14,8 +14,7 @@ class Student(Base):
     __tablename__ = "students"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    first_name: Mapped[str] = mapped_column(String(20), nullable=False)
-    second_name: Mapped[str] = mapped_column(String(20), nullable=False)
+    name: Mapped[str] = mapped_column(String(30), nullable=False)
     group_id: Mapped[int] = mapped_column(ForeignKey("groups.id"))
 
     group: Mapped["Group"] = relationship(back_populates="students")
@@ -24,7 +23,7 @@ class Student(Base):
     )
 
     def __str__(self):
-        return f"Student({self.id}, {self.first_name}, {self.second_name})"
+        return f"Student({self.id}, {self.name})"
 
 
 # One to many
@@ -34,7 +33,7 @@ class Group(Base):
     __tablename__ = "groups"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    group_name: Mapped[str] = mapped_column(String(6), nullable=False)
+    group_name: Mapped[str] = mapped_column(String(10), nullable=False)
 
     students: Mapped[list["Student"]] = relationship(
         back_populates="group", cascade="all, delete-orphan"
@@ -51,15 +50,14 @@ class Teacher(Base):
     __tablename__ = "teachers"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    first_name: Mapped[str] = mapped_column(String(20), nullable=False)
-    second_name: Mapped[str] = mapped_column(String(20), nullable=False)
+    name: Mapped[str] = mapped_column(String(30), nullable=False)
 
     disciplines: Mapped[list["Discipline"]] = relationship(
         back_populates="teacher", cascade="all, delete-orphan"
     )
 
     def __str__(self):
-        return f"Teacher({self.id}, {self.first_name}, {self.second_name})"
+        return f"Teacher({self.id}, {self.name})"
 
 
 # Many to one
@@ -69,7 +67,7 @@ class Discipline(Base):
     __tablename__ = "disciplines"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    discipline_name: Mapped[str] = mapped_column(String(20), nullable=False)
+    discipline_name: Mapped[str] = mapped_column(String(30), nullable=False)
     teacher_id: Mapped["Teacher"] = mapped_column(ForeignKey("teachers.id"))
 
     teacher: Mapped["Teacher"] = relationship(back_populates="disciplines")
