@@ -1,10 +1,13 @@
-from sqlalchemy import String, ForeignKey, Date
+from sqlalchemy import String, ForeignKey, Date,Table,Column
 from sqlalchemy.orm import DeclarativeBase, Mapped, relationship, mapped_column, Session
 from datetime import date
 
 
 class Base(DeclarativeBase):
     pass
+
+
+# Many to one
 
 
 class Student(Base):
@@ -24,6 +27,9 @@ class Student(Base):
         return f"Student({self.id}, {self.first_name}, {self.second_name})"
 
 
+# One to many
+
+
 class Group(Base):
     __tablename__ = "groups"
 
@@ -36,6 +42,9 @@ class Group(Base):
 
     def __str__(self):
         return f"Group({self.id}, {self.group_name})"
+
+
+# One to many
 
 
 class Teacher(Base):
@@ -53,6 +62,9 @@ class Teacher(Base):
         return f"Teacher({self.id}, {self.first_name}, {self.second_name})"
 
 
+# Many to one
+
+
 class Discipline(Base):
     __tablename__ = "disciplines"
 
@@ -68,6 +80,15 @@ class Discipline(Base):
     def __str__(self):
         return f"Teacher({self.id}, {self.first_name}, {self.second_name})"
 
+
+# Many to many
+
+association_table=Table(
+    "grades_assotiation_table",
+    Base.metadata,
+    Column("student_id"),
+    Column(),
+)
 
 class Grade(Base):
     __tablename__ = "grades"
