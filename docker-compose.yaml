@@ -14,11 +14,13 @@ services:
     image: postgres
     shm_size: 700mb
     environment:
-      - POSTGRES_DB=university_db
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=homeworkpassword
-      - TimeZone=Europe/Kyiv
-      - PGTZ=Europe/Kyiv
+      POSTGRES_DB: university_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: homeworkpassword
+      TZ: Europe/Kyiv
+    command: >
+      bash -c "ln -sf /usr/share/zoneinfo/Europe/Kyiv /usr/share/zoneinfo/Europe/Kiev &&
+               exec docker-entrypoint.sh postgres"
     ports:
       - "5432:5432"
     volumes:

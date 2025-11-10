@@ -1,8 +1,6 @@
-from sqlalchemy import create_engine, String, ForeignKey, Date
+from sqlalchemy import String, ForeignKey, Date
 from sqlalchemy.orm import DeclarativeBase, Mapped, relationship, mapped_column, Session
 from datetime import date
-
-engine = create_engine("sqlite:///bookshelf.db", echo=True)
 
 
 class Base(DeclarativeBase):
@@ -60,7 +58,7 @@ class Discipline(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     discipline_name: Mapped[str] = mapped_column(String(20), nullable=False)
-    teacher_id: Mapped["Teacher"] = mapped_column(ForeignKey("teacgers.id"))
+    teacher_id: Mapped["Teacher"] = mapped_column(ForeignKey("teachers.id"))
 
     teacher: Mapped["Teacher"] = relationship(back_populates="disciplines")
     grades: Mapped[list["Grade"]] = relationship(
@@ -80,7 +78,7 @@ class Grade(Base):
 
     student_id: Mapped[int] = mapped_column(ForeignKey("students.id"), nullable=False)
     discipline_id: Mapped[int] = mapped_column(
-        ForeignKey("discipline.id"), nullable=False
+        ForeignKey("disciplines.id"), nullable=False
     )
 
     student: Mapped["Student"] = relationship(back_populates="grades")
