@@ -2,7 +2,7 @@ import random
 from sqlalchemy.orm import Session
 from .configuration import engine
 from .models import Group, Student, Grade, Teacher, Discipline
-from datetime import date,timedelta
+from datetime import date, timedelta
 from faker import Faker
 from .faker_providers import disciplines_provider
 
@@ -78,16 +78,16 @@ def fillGrades():
             discipline_ids = [
                 discipline.id for discipline in session.query(Discipline.id).all()]
 
-            semester_start = date(2025, 9, 1) 
+            semester_start = date(2025, 9, 1)
             semester_end = date(2025, 12, 31)
 
-            all_dates = [semester_start + timedelta(days=i) 
-            for i in range((semester_end - semester_start).days + 1)]
+            all_dates = [semester_start + timedelta(days=i)
+                         for i in range((semester_end - semester_start).days + 1)]
             grades_to_add = []
 
             for student_id in student_ids:
                 possible_combinations = [(d, dt)
-                                        for d in discipline_ids for dt in all_dates]
+                                         for d in discipline_ids for dt in all_dates]
 
                 chosen_combinations = random.sample(
                     possible_combinations, min(20, len(possible_combinations)))
@@ -95,13 +95,12 @@ def fillGrades():
                 for discipline_id, grade_date in chosen_combinations:
                     grades_to_add.append(
                         Grade(
-                            grade=random.randint(60,100),
+                            grade=random.randint(60, 100),
                             student_id=student_id,
                             discipline_id=discipline_id,
                             date_received=grade_date
                         )
                     )
-
 
             session.add_all(grades_to_add)
         except Exception:
@@ -125,3 +124,12 @@ def clearAllData():
             raise
         else:
             session.commit()
+
+
+def autoFill():
+    clearAllData()
+    fillGroup(3)
+    fillStudent(30)
+    fillTeacher(6)
+    fillDiscipline()
+    fillGrades()
