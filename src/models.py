@@ -76,7 +76,7 @@ class Discipline(Base):
     )
 
     def __str__(self):
-        return f"Teacher({self.id}, {self.first_name}, {self.second_name})"
+        return f"Discipline: ({self.id}, {self.discipline_name}, Teacher: {self.teacher_id})"
 
 
 # Many to many
@@ -95,3 +95,6 @@ class Grade(Base):
 
     student: Mapped["Student"] = relationship(back_populates="grades")
     discipline: Mapped["Discipline"] = relationship(back_populates="grades")
+
+    def __str__(self):
+        return f"Grades: (Student: {self.student_id}, Discipline: {self.discipline_id}, Date: {self.date_received}, Grade: {self.grade})"

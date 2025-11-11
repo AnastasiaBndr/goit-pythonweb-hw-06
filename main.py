@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from src.configuration import engine
 from src.seed import autoFill
 from src.instanses import create_instance, list_instances, update_instance, delete_instance
-
+from src.my_select import select12
 
 def get_kwargs(args):
     fields = {
@@ -31,7 +31,6 @@ def handle_action(session, args):
         action_func()
     else:
         print("❌ Unknown action!")
-
 
 def main():
     # autoFill()

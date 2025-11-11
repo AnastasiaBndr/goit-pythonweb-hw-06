@@ -178,7 +178,7 @@ def select_8(teacher):
             teacher_name = session.get(Teacher, teacher)
 
             print(
-                f"Середній бал, який ставить викладач {teacher_name.name}: {avg_grade}")
+                f"{teacher_name.name}: {avg_grade}")
         except:
             session.rollback()
             raise
@@ -200,7 +200,7 @@ def select_9(student):
 
             student_name = session.get(Student, student)
 
-            print(f"Студент {student_name.name} відвідує курси:")
+            print(f"Student {student_name.name} visits courses:")
             for (course_name,) in courses:
                 print(f"- {course_name}")
 
@@ -211,7 +211,7 @@ def select_9(student):
             session.commit()
 
 
-def select_10(student,teacher):
+def select_10(student, teacher):
     with Session(engine) as session:
         try:
 
@@ -228,10 +228,81 @@ def select_10(student,teacher):
             teacher_name = session.get(Teacher, teacher)
 
             print(
-                f"Курси, які студент {student_name.name} слухає у викладача {teacher_name.name}:")
-            
+                f"Student {student_name.name} attends {teacher_name.name}'s courses:")
+
             for (course_name,) in courses:
                 print(f"- {course_name}")
+
+        except:
+            session.rollback()
+            raise
+        else:
+            session.commit()
+
+
+""" PART 2 """
+
+
+def select11(teacher, student):
+    with Session(engine) as session:
+        try:
+            teacher_marks = (
+                session.query(
+                    Teacher.name.label("teacher_name"),
+                    Student.name.label("student_name"),
+                    func.avg(Grade.grade).label("avg_grade")
+                )
+                .select_from(Grade)
+                .join(Grade.discipline)
+                .join(Discipline.teacher)
+                .join(Grade.student)
+                .filter(Teacher.id == teacher, Student.id == student)
+                .group_by(Teacher.id, Student.id)
+                .order_by(Teacher.name, Student.name)
+                .all()
+            )
+
+            for teach, stud, mark in teacher_marks:
+                print(f"Teacher: {teach}\nStudent: {stud}\nMark: {mark}")
+
+        except:
+            session.rollback()
+            raise
+        else:
+            session.commit()
+
+
+def select12(group, discipline):
+    with Session(engine) as session:
+        try:
+            last_date = (
+                session.query(func.max(Grade.date_received))
+                .select_from(Grade)
+                .join(Grade.student)
+                .join(Student.group)
+                .join(Grade.discipline)
+                .filter(Group.id == group)
+                .filter(Discipline.id == discipline)
+                .scalar()
+            )
+
+            teacher_marks = (
+                session.query(
+                    Group.group_name.label("Group"),
+                    Discipline.discipline_name,
+                    Student.name.label("Student"),
+                    Grade.grade.label("Grade"),
+                    Grade.date_received
+                )
+                .join(Grade.student)
+                .join(Student.group)
+                .join(Grade.discipline)
+                .filter(Group.id == group, Discipline.id == discipline, Grade.date_received == last_date)
+                .all()
+            )
+
+            for teach in teacher_marks:
+                print(f"{teach}")
 
         except:
             session.rollback()
