@@ -6,7 +6,6 @@ from src.instanses import create_instance, list_instances, update_instance, dele
 
 
 def get_kwargs(args):
-    """Формує словник аргументів для CRUD-операцій."""
     fields = {
         "name": args.name,
         "group_name": args.name if args.model == "Group" else None,
@@ -20,41 +19,40 @@ def get_kwargs(args):
 
 
 def handle_action(session, args):
-    """Обробляє CRUD-дію."""
     actions = {
         "create": lambda: create_instance(session, args.model, **get_kwargs(args)),
         "list": lambda: list_instances(session, args.model),
-        "update": lambda: update_instance(session, args.model, args.id, **get_kwargs(args)) if args.id else print("❗ Потрібно вказати --id для update"),
-        "remove": lambda: delete_instance(session, args.model, args.id) if args.id else print("❗ Потрібно вказати --id для remove"),
+        "update": lambda: update_instance(session, args.model, args.id, **get_kwargs(args)) if args.id else print("❗ You need to set --id for update"),
+        "remove": lambda: delete_instance(session, args.model, args.id) if args.id else print("❗ You need to set --id for remove"),
     }
 
     action_func = actions.get(args.action)
     if action_func:
         action_func()
     else:
-        print("❌ Невідома дія!")
+        print("❌ Unknown action!")
 
 
 def main():
     # autoFill()
 
     parser = argparse.ArgumentParser(
-        description="CLI для керування базою студентів")
+        description="CLI for db control")
     parser.add_argument("-a", "--action", choices=["create", "list", "update", "remove"], required=True,
-                        help="CRUD операція: create, list, update, remove")
+                        help="CRUD operation: create, list, update, remove")
     parser.add_argument("-m", "--model", required=True,
-                        help="Назва моделі: Group, Student, Teacher, Discipline, Grade")
-    parser.add_argument("--id", type=int, help="ID запису (для update/delete)")
+                        help="Model name: Group, Student, Teacher, Discipline, Grade")
+    parser.add_argument("--id", type=int, help="ID (for update/delete)")
     parser.add_argument(
-        "--name", type=str, help="Ім'я або назва (Teacher, Student, Group, Discipline)")
-    parser.add_argument("--group_id", type=int, help="ID групи (для Student)")
+        "--name", type=str, help="Name (Teacher, Student, Group, Discipline)")
+    parser.add_argument("--group_id", type=int, help="Group ID (for Student)")
     parser.add_argument("--teacher_id", type=int,
-                        help="ID викладача (для Discipline)")
+                        help="Teacher ID (for Discipline)")
     parser.add_argument("--discipline_id", type=int,
-                        help="ID предмета (для Grade)")
+                        help="Discipline ID (for Grade)")
     parser.add_argument("--student_id", type=int,
-                        help="ID студента (для Grade)")
-    parser.add_argument("--grade", type=int, help="Оцінка (для Grade)")
+                        help="Student ID (for Grade)")
+    parser.add_argument("--grade", type=int, help="Grade (for Grade)")
 
     args = parser.parse_args()
 
